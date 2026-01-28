@@ -282,6 +282,52 @@ COMMENT ON COLUMN hg_admin_member.status IS '状态';
 COMMENT ON COLUMN hg_admin_member.created_at IS '创建时间';
 COMMENT ON COLUMN hg_admin_member.updated_at IS '修改时间';
 
+-- hg_app_user
+
+CREATE TABLE IF NOT EXISTS hg_app_user (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL DEFAULT '',
+    nickname VARCHAR(100) DEFAULT '',
+    password_hash VARCHAR(255) NOT NULL DEFAULT '',
+    salt VARCHAR(10) NOT NULL,
+    mobile VARCHAR(20) DEFAULT '',
+    email VARCHAR(100) DEFAULT '',
+    avatar VARCHAR(500) DEFAULT '',
+    sex SMALLINT DEFAULT 0,
+    birthday DATE,
+    last_login_at TIMESTAMP,
+    last_login_ip VARCHAR(50) DEFAULT '',
+    status SMALLINT DEFAULT 1,
+    remark TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+COMMENT ON TABLE hg_app_user IS 'C端_用户表';
+COMMENT ON COLUMN hg_app_user.id IS '用户ID';
+COMMENT ON COLUMN hg_app_user.username IS '用户名';
+COMMENT ON COLUMN hg_app_user.nickname IS '昵称';
+COMMENT ON COLUMN hg_app_user.password_hash IS '密码哈希';
+COMMENT ON COLUMN hg_app_user.salt IS '密码盐';
+COMMENT ON COLUMN hg_app_user.mobile IS '手机号';
+COMMENT ON COLUMN hg_app_user.email IS '邮箱';
+COMMENT ON COLUMN hg_app_user.avatar IS '头像URL';
+COMMENT ON COLUMN hg_app_user.sex IS '性别：0未知 1男 2女';
+COMMENT ON COLUMN hg_app_user.birthday IS '生日';
+COMMENT ON COLUMN hg_app_user.last_login_at IS '最后登录时间';
+COMMENT ON COLUMN hg_app_user.last_login_ip IS '最后登录IP';
+COMMENT ON COLUMN hg_app_user.status IS '状态：1正常 2禁用';
+COMMENT ON COLUMN hg_app_user.remark IS '备注';
+COMMENT ON COLUMN hg_app_user.created_at IS '创建时间';
+COMMENT ON COLUMN hg_app_user.updated_at IS '修改时间';
+
+-- 创建索引
+CREATE INDEX IF NOT EXISTS idx_app_user_username ON hg_app_user(username);
+CREATE INDEX IF NOT EXISTS idx_app_user_mobile ON hg_app_user(mobile);
+CREATE INDEX IF NOT EXISTS idx_app_user_email ON hg_app_user(email);
+CREATE INDEX IF NOT EXISTS idx_app_user_status ON hg_app_user(status);
+CREATE INDEX IF NOT EXISTS idx_app_user_created_at ON hg_app_user(created_at);
+
 -- hg_admin_member_post
 
 CREATE TABLE IF NOT EXISTS hg_admin_member_post (
