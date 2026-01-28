@@ -7,7 +7,6 @@ package router
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"hotgo/internal/consts"
 	"hotgo/internal/controller/admin/admin"
 	"hotgo/internal/controller/admin/common"
@@ -16,6 +15,8 @@ import (
 	"hotgo/internal/router/genrouter"
 	"hotgo/internal/service"
 	"hotgo/utility/simple"
+
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 func Admin(ctx context.Context, group *ghttp.RouterGroup) {
@@ -59,6 +60,7 @@ func Admin(ctx context.Context, group *ghttp.RouterGroup) {
 			admin.CreditsLog, // 资金变动
 			admin.Cash,       // 提现
 			pay.Refund,       // 交易退款
+			admin.AppUser,    // C端用户管理
 		)
 
 		group.Middleware(service.Middleware().Develop)
