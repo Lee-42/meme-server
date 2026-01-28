@@ -9,9 +9,9 @@ import (
 	"context"
 	"hotgo/internal/consts"
 	"hotgo/internal/dao"
-	"hotgo/internal/library/contexts"
 	"hotgo/internal/library/hgorm"
 	"hotgo/internal/library/token"
+	"hotgo/internal/model"
 	"hotgo/internal/model/entity"
 	"hotgo/internal/model/input/appin"
 	"hotgo/internal/service"
@@ -117,14 +117,26 @@ func (s *sAppUser) Login(ctx context.Context, in *appin.UserLoginInp) (tokenStri
 	}
 
 	// 生成JWT Token
-	tokenString, _, err = token.GenerateToken(ctx, consts.AppUser, user.Id)
+	identity := &model.Identity{
+		Id:       user.Id,
+		Username: user.Username,
+		Mobile:   user.Mobile,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
+		App:      consts.AppApi,
+		LoginAt:  gtime.Now(),
+	}
+	tokenString, _, err = token.Login(ctx, identity)
 	if err != nil {
 		err = gerror.Wrap(err, "生成Token失败")
 		return
 	}
 
 	// 更新最后登录信息
-	clientIp := contexts.GetClientIp(ctx)
+	var clientIp string
+	if r := g.RequestFromCtx(ctx); r != nil {
+		clientIp = r.GetClientIp()
+	}
 	_, err = dao.AppUser.Ctx(ctx).
 		Where(dao.AppUser.Columns().Id, user.Id).
 		Data(g.Map{
