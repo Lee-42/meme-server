@@ -11,12 +11,8 @@ import (
 func main() {
 	fmt.Println("Start creating table hg_app_user...")
 
-	// 尝试直接使用 g.DB()，如果环境配置正确（配置了 manifest/config/config.yaml），它应该能连上。
-	// 但这是一个独立的脚本，可能没加载配置。为了保险，我们手动配置一下默认的连接，
-	// 并允许失败（如果连不上，打印错误提示用户检查）。
-
-	// 注意：这里硬编码了密码，如果不对，用户需要在运行前修改此文件
-	g.Cfg().GetAdapter().(*g.AdapterFile).SetFileName("manifest/config/config.yaml")
+	// 简单的建表脚本，依赖 manifest/config/config.yaml 配置
+	// 确保运行目录在 server 下，这样能自动找到 resource 配置
 
 	sql := `
 CREATE TABLE IF NOT EXISTS hg_app_user (
@@ -46,16 +42,7 @@ CREATE INDEX IF NOT EXISTS idx_app_user_created_at ON hg_app_user(created_at);
 `
 	if _, err := g.DB().Exec(context.Background(), sql); err != nil {
 		fmt.Printf("Error creating table: %v\n", err)
-		// 尝试 fallback 连接串
-		fmt.Println("Trying fallback connection string...")
-		g.DB().GetConfig().AddDefaultGroupNode(g.DBConfigNode{
-			Type: "pgsql",
-			Link: "pgsql:postgres:hg123456@tcp(127.0.0.1:5432)/hotgo",
-		})
-		if _, err := g.DB().Exec(context.Background(), sql); err != nil {
-			panic(fmt.Sprintf("Still failed: %v", err))
-		}
+	} else {
+		fmt.Println("✅ Table hg_app_user created successfully!")
 	}
-
-	fmt.Println("✅ Table hg_app_user created successfully!")
 }
