@@ -4,41 +4,40 @@ import (
 	"context"
 	"fmt"
 
-	_ "github.com/gogf/gf/contrib/drivers/pgsql/v2"
+	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
 func main() {
-	fmt.Println("Start creating table hg_app_user...")
+	fmt.Println("Start creating table hg_app_user (MySQL)...")
 
-	// 简单的建表脚本，依赖 manifest/config/config.yaml 配置
-	// 确保运行目录在 server 下，这样能自动找到 resource 配置
+	// 依赖 manifest/config/config.yaml 中的 MySQL 配置
 
 	sql := `
 CREATE TABLE IF NOT EXISTS hg_app_user (
-    id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL DEFAULT '',
-    nickname VARCHAR(100) DEFAULT '',
-    password_hash VARCHAR(255) NOT NULL DEFAULT '',
-    salt VARCHAR(10) NOT NULL,
-    mobile VARCHAR(20) DEFAULT '',
-    email VARCHAR(100) DEFAULT '',
-    avatar VARCHAR(500) DEFAULT '',
-    sex SMALLINT DEFAULT 0,
-    birthday DATE,
-    last_login_at TIMESTAMP,
-    last_login_ip VARCHAR(50) DEFAULT '',
-    status SMALLINT DEFAULT 1,
-    remark TEXT,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_app_user_username ON hg_app_user(username);
-CREATE INDEX IF NOT EXISTS idx_app_user_mobile ON hg_app_user(mobile);
-CREATE INDEX IF NOT EXISTS idx_app_user_email ON hg_app_user(email);
-CREATE INDEX IF NOT EXISTS idx_app_user_status ON hg_app_user(status);
-CREATE INDEX IF NOT EXISTS idx_app_user_created_at ON hg_app_user(created_at);
+    id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    username varchar(50) NOT NULL DEFAULT '' COMMENT '用户名',
+    nickname varchar(100) DEFAULT '' COMMENT '昵称',
+    password_hash varchar(255) NOT NULL DEFAULT '' COMMENT '密码哈希',
+    salt varchar(10) NOT NULL COMMENT '密码盐',
+    mobile varchar(20) DEFAULT '' COMMENT '手机号',
+    email varchar(100) DEFAULT '' COMMENT '邮箱',
+    avatar varchar(500) DEFAULT '' COMMENT '头像URL',
+    sex tinyint(1) DEFAULT '0' COMMENT '性别',
+    birthday date DEFAULT NULL COMMENT '生日',
+    last_login_at datetime DEFAULT NULL COMMENT '最后登录时间',
+    last_login_ip varchar(50) DEFAULT '' COMMENT '最后登录IP',
+    status tinyint(1) DEFAULT '1' COMMENT '状态',
+    remark text COMMENT '备注',
+    created_at datetime DEFAULT NULL COMMENT '创建时间',
+    updated_at datetime DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (id),
+    UNIQUE KEY uniq_username (username),
+    KEY idx_mobile (mobile),
+    KEY idx_email (email),
+    KEY idx_status (status),
+    KEY idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='应用_普通用户';
 `
 	if _, err := g.DB().Exec(context.Background(), sql); err != nil {
 		fmt.Printf("Error creating table: %v\n", err)
