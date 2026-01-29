@@ -3,13 +3,13 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: hotgo-mysql
+    container_name: meme-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root123456
-      MYSQL_DATABASE: hotgo
-      MYSQL_USER: hotgo
-      MYSQL_PASSWORD: hg123456.
+      MYSQL_ROOT_PASSWORD: jmqs18666
+      MYSQL_DATABASE: meme
+      MYSQL_USER: leo
+      MYSQL_PASSWORD: jmqs18666
       TZ: Asia/Shanghai
     ports:
       - "3306:3306"
